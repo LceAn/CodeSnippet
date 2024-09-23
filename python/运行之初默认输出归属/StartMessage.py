@@ -4,7 +4,7 @@
 # @File : StartMessage.py
 # @Software : PyCharm
 
-# 导入 colorama 库以实现多平台颜色兼容性
+import requests
 from colorama import Fore, Style, init
 
 # 初始化 colorama（只在 Windows 上需要）
@@ -20,10 +20,10 @@ class Config:
     red = Fore.RED
     end = Style.RESET_ALL
 
-    # 版本信息占位符
-    version = 'v0.0.2'
-    # 脚本信息占位符
-    version_info = f"{white}{{{red}{version} #dev{white}}}"
+    # 本地版本信息
+    local_version = 'v0.0.2'
+    version_info = f"{white}{{{red}{local_version} #dev{white}}}"
+    repo_api_url = "https://api.github.com/repos/你的用户名/你的仓库名/releases/latest"
 
     @staticmethod
     def generate_titles(script_function, script_name, author):
@@ -61,15 +61,38 @@ class Config:
 
         print(f"{color}{prefix} {message}{Config.end}")
 
+    @staticmethod
+    def get_latest_version():
+        """从GitHub获取最新版本号"""
+        try:
+            response = requests.get(Config.repo_api_url)
+            if response.status_code == 200:
+                latest_version = response.json()["tag_name"]
+                return latest_version
+            else:
+                Config.print_status("无法从GitHub获取版本信息", "warning")
+                return None
+        except requests.exceptions.RequestException as e:
+            Config.print_status(f"请求失败: {e}", "error")
+            return None
+
+    @staticmethod
+    def check_for_updates():
+        """检查是否有新版本"""
+        latest_version = Config.get_latest_version()
+        if latest_version:
+            if Config.local_version < latest_version:
+                Config.print_status(f"有新版本可用: {latest_version}，请及时更新！", "warning")
+            else:
+                Config.print_status("当前版本已是最新版本。", "info")
+
 
 def main():
     """主函数：替换此处为具体的业务逻辑"""
     # 示例打印状态信息
     Config.print_status("脚本运行中，请稍候...", 'info')
-    # 模拟一个警告信息
-    Config.print_status("这是一个警告信息，请注意！", 'warning')
-    # 模拟一个错误信息
-    Config.print_status("发生了一个错误，请检查！", 'error')
+    # 检查更新
+    Config.check_for_updates()
     # 业务逻辑结束
     Config.print_status("脚本运行结束。", 'info')
 
