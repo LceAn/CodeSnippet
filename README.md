@@ -14,6 +14,28 @@
 ├── java
 ├── php
 ├── python
+│   ├── Flask_MVC
+│   │   ├── Demo1
+│   │   │   ├── app
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── config.py
+│   │   │   │   ├── models
+│   │   │   │   │   ├── __init__.py
+│   │   │   │   │   └── model.py
+│   │   │   │   ├── static
+│   │   │   │   │   ├── css
+│   │   │   │   │   │   └── css.css
+│   │   │   │   │   ├── img
+│   │   │   │   │   │   └── img.png
+│   │   │   │   │   └── js
+│   │   │   │   │       └── javascript.js
+│   │   │   │   ├── templates
+│   │   │   │   │   └── index.html
+│   │   │   │   └── views
+│   │   │   │       ├── __init__.py
+│   │   │   │       └── main.py
+│   │   │   └── manager.py
+│   │   └── README.md
 │   └── 运行之初默认输出归属
 │       ├── README.md
 │       └── StartMessage.py
