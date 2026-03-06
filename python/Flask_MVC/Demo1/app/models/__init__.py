@@ -1,7 +1,9 @@
-# -*-  coding : utf-8 -*-
-# @Time : 2024/8/7 下午6:07
-# @Autor : LceAn
-# @File : __init__.py.py
-# @Software : PyCharm
+"""
+数据模型初始化模块
 
-from .model import *
+导入所有模型类以便统一访问
+"""
+
+from app.models.model import ExampleModel
+
+__all__ = ['ExampleModel']
