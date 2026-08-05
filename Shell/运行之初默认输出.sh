@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -u
 
 # 设置颜色常量
 GREEN='\033[0;32m'
@@ -28,8 +30,7 @@ function generate_titles {
     echo "                  |_____|                 |_____|     By ${VERSION_INFO}"
     echo "作者：${AUTHOR}"
     echo "脚本名称：${SCRIPT_NAME}"
-    echo "内部版本，请勿泄漏"
-    echo -e "${RED}本脚本正在开发中，请在每次使用前更新！${END_COLOR}"
+    echo -e "${BLUE}${SCRIPT_FUNCTION}${END_COLOR}"
 }
 
 # 打印状态信息
@@ -54,22 +55,9 @@ function print_status {
     echo -e "${COLOR}${PREFIX} ${MESSAGE}${END_COLOR}"
 }
 
-# 检查是否有新版本
-function check_for_updates {
-    # 模拟从 GitHub 获取最新版本（此处可以通过 curl 请求获取实际的版本信息）
-    LATEST_VERSION="v0.0.3"  # 假设 GitHub 返回的最新版本是 v0.0.3
-
-    if [[ "$LOCAL_VERSION" < "$LATEST_VERSION" ]]; then
-        print_status "有新版本可用: ${LATEST_VERSION}，请及时更新！" "warning"
-    else
-        print_status "当前版本已是最新版本。" "info"
-    fi
-}
-
 # 主函数
 function main {
     print_status "脚本运行中，请稍候..." 'info'
-    check_for_updates
     print_status "脚本运行结束。" 'info'
 }
 

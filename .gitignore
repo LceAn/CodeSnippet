@@ -66,6 +66,3 @@ htmlcov/
 # Flask
 instance/
 .webassets-cache
-
-# Upload script
-upload_to_github.py

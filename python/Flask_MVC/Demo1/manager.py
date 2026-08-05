@@ -7,9 +7,14 @@ Flask 应用管理脚本
 
 import argparse
 import sys
-from typing import Any
 from app import create_app
-from app.config import config
+
+
+def valid_port(value: str) -> int:
+    port = int(value)
+    if not 1 <= port <= 65535:
+        raise argparse.ArgumentTypeError('端口必须在 1 到 65535 之间')
+    return port
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -33,7 +38,7 @@ def parse_arguments() -> argparse.Namespace:
     
     parser.add_argument(
         '--port',
-        type=int,
+        type=valid_port,
         default=5000,
         help='运行端口 (默认：5000)'
     )
@@ -70,6 +75,9 @@ def main() -> int:
         退出码
     """
     args = parse_arguments()
+    if args.env == 'production' and args.debug:
+        print('生产环境不允许启用 Flask 调试器', file=sys.stderr)
+        return 2
     
     # 创建应用
     app = create_app(f'app.config.{args.env.capitalize()}Config')

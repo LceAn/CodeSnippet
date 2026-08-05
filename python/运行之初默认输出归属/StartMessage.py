@@ -7,6 +7,7 @@
 """
 
 import sys
+import re
 import requests
 from typing import Optional
 from colorama import Fore, Style, init
@@ -97,6 +98,9 @@ class ScriptConfig:
         Returns:
             最新版本号，失败返回 None
         """
+        if ScriptConfig.REPO_OWNER.startswith('你的') or ScriptConfig.REPO_NAME.startswith('你的'):
+            return None
+
         try:
             response = requests.get(ScriptConfig.REPO_API_URL, timeout=timeout)
             if response.status_code == 200:
@@ -118,7 +122,9 @@ class ScriptConfig:
         """
         latest_version = ScriptConfig.get_latest_version()
         if latest_version:
-            if ScriptConfig.LOCAL_VERSION < latest_version:
+            current = tuple(int(part) for part in re.findall(r'\d+', ScriptConfig.LOCAL_VERSION))
+            latest = tuple(int(part) for part in re.findall(r'\d+', latest_version))
+            if latest > current:
                 print(Colors.warning(f"发现新版本：{latest_version}，当前版本：{ScriptConfig.LOCAL_VERSION}"))
                 print(Colors.info_msg("请及时更新！"))
                 return True

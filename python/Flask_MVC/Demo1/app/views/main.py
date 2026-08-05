@@ -55,13 +55,3 @@ def health_check() -> Tuple[Any, int]:
         'status': 'healthy',
         'message': 'Application is running'
     }), 200
-
-
-def init_routes(app: Any) -> None:
-    """
-    注册路由蓝图
-    
-    Args:
-        app: Flask 应用实例
-    """
-    app.register_blueprint(main_bp)

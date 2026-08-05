@@ -62,11 +62,11 @@ class ProductionConfig(Config):
     
     ENV = 'production'
     DEBUG = False
+    SECRET_KEY = os.environ.get('SECRET_KEY')
     
     # 生产环境使用 MySQL/PostgreSQL
     SQLALCHEMY_DATABASE_URI: str = os.environ.get(
-        'DATABASE_URL',
-        'mysql+pymysql://user:password@localhost/production_db'
+        'DATABASE_URL'
     )
     
     # 生产环境日志级别
@@ -80,6 +80,13 @@ class ProductionConfig(Config):
     @classmethod
     def init_app(cls, app: Any) -> None:
         Config.init_app(app)
+        missing = [
+            name
+            for name in ('SECRET_KEY', 'SQLALCHEMY_DATABASE_URI')
+            if not app.config.get(name)
+        ]
+        if missing:
+            raise RuntimeError(f"生产环境缺少必要配置：{', '.join(missing)}")
         app.logger.info('当前为生产环境')
 
 
@@ -88,6 +95,7 @@ class TestingConfig(Config):
     
     ENV = 'testing'
     TESTING = True
+    LOG_DIR = None
     
     # 测试环境使用内存数据库
     SQLALCHEMY_DATABASE_URI: str = 'sqlite:///:memory:'

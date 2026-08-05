@@ -11,6 +11,7 @@ from app.views import init_routes
 import logging
 from logging.handlers import RotatingFileHandler
 import os
+from werkzeug.utils import import_string
 
 
 def create_app(config_object: str = 'app.config.Config') -> Flask:
@@ -24,7 +25,9 @@ def create_app(config_object: str = 'app.config.Config') -> Flask:
         配置好的 Flask 应用实例
     """
     app = Flask(__name__)
-    app.config.from_object(config_object)
+    config_class = import_string(config_object) if isinstance(config_object, str) else config_object
+    app.config.from_object(config_class)
+    config_class.init_app(app)
     
     # 初始化日志
     _init_logging(app)
@@ -50,18 +53,20 @@ def _init_logging(app: Flask) -> None:
     Args:
         app: Flask 应用实例
     """
+    app.logger.handlers.clear()
+
     # 创建日志目录
     log_dir = app.config.get('LOG_DIR', 'logs')
-    if not os.path.exists(log_dir):
-        os.makedirs(log_dir)
-    
-    # 文件处理器（轮转，最大 10MB）
-    file_handler = RotatingFileHandler(
-        os.path.join(log_dir, 'app.log'),
-        maxBytes=10240000,
-        backupCount=10
-    )
-    file_handler.setLevel(logging.INFO)
+    file_handler = None
+    if log_dir:
+        os.makedirs(log_dir, exist_ok=True)
+        file_handler = RotatingFileHandler(
+            os.path.join(log_dir, 'app.log'),
+            maxBytes=10 * 1024 * 1024,
+            backupCount=10,
+            encoding='utf-8',
+        )
+        file_handler.setLevel(app.config.get('LOG_LEVEL', logging.INFO))
     
     # 控制台处理器
     console_handler = logging.StreamHandler()
@@ -72,13 +77,15 @@ def _init_logging(app: Flask) -> None:
         '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]',
         datefmt='%Y-%m-%d %H:%M:%S'
     )
-    file_handler.setFormatter(formatter)
+    if file_handler:
+        file_handler.setFormatter(formatter)
     console_handler.setFormatter(formatter)
     
     # 添加处理器
-    app.logger.addHandler(file_handler)
+    if file_handler:
+        app.logger.addHandler(file_handler)
     app.logger.addHandler(console_handler)
-    app.logger.setLevel(logging.INFO)
+    app.logger.setLevel(app.config.get('LOG_LEVEL', logging.INFO))
 
 
 def _register_extensions(app: Flask) -> None:
