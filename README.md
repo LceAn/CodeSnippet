@@ -62,3 +62,11 @@ shellcheck 'Shell/运行之初默认输出.sh'
 - 维护节奏：按季度验证依赖、示例行为和文档
 - 相关仓库：未发现功能相同、可直接合并的仓库
 - 维护边界：归档、删除或历史重写需单独确认
+
+---
+
+## 文档
+
+- [CHANGELOG.md](CHANGELOG.md) — 更新日志
+- [ROADMAP.md](ROADMAP.md) — 未来更新计划
+- [UPDATE_SUMMARY.md](UPDATE_SUMMARY.md) — v2.0.0 更新总结
